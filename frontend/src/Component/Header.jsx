@@ -11,7 +11,7 @@ function Header() {
   const myCookie = {
     name : "Rauf Ahmad Khan",
     gmail : "devraufahmadniazi@gmail.com",
-    role : ""
+    role : "admin"
   }
 
   const [ signIn , setSignIn ] = useState(false);
@@ -96,7 +96,7 @@ function Header() {
                     <p>My Bookings</p>
                     <img className='w-6 h-6 absolute left-2 top-[30%]' src="https://cdn-icons-png.flaticon.com/128/4812/4812872.png" alt="" />
                 </NavLink>
-                <NavLink to={`${ myCookie.role == 'admin' ? '/admin/dashboard' : '/dashboard' }`} className='flex flex-row justify-center items-center relative w-full h-[15%] opacity-55 hover:opacity-100 transition-all duration-200' >
+                <NavLink to={`${ myCookie.role == 'admin' ? '/admin/dashboard' : '/restaurants' }`} className='flex flex-row justify-center items-center relative w-full h-[15%] opacity-55 hover:opacity-100 transition-all duration-200' >
                     <p className='text-center' >{ myCookie.role == 'admin' ? 'Admin Panel' : 'User Panel' }</p>
                     <img className='w-6 h-6 absolute left-2 top-[30%]' src="https://cdn-icons-png.flaticon.com/128/4812/4812872.png" alt="" />
                 </NavLink>
