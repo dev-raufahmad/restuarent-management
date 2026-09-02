@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Header from '../Component/Header'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Footer from '../Component/Footer.jsx'
-
+import { useForm } from 'react-hook-form'
 
 const benefits = [
   {
@@ -121,79 +121,87 @@ const cuisines = [
 ];
 
 function Home() {
+  const { register , handleSubmit } = useForm();
+  const naviagte = useNavigate();
 
-  // const [ signIn , setSignIn ] = useState(false);
-  // const [logIn , setLonIn] = useState(false);
-
+  const searching = (data) => {
+    naviagte('/restaurants' , {
+      state : data
+    })
+  }
   return (
     <div>
-        <div className="bg-[url('../public/restaurant_1.png')]" >
-      <Header />
-      {/* <LogInAndSignIn prop={ {setLonIn , setSignIn , logIn , signIn} } /> */}
-      <div className='w-screen h-screen text-white space-y-10 flex flex-col justify-center items-center' >
-            <p className='text-amber-400 text-2xl' >EXQUISITIC DINER EXPERIANCE</p>
-            <h1 className='font-extrabold text-6xl'>Curation For The Discering Palete</h1>
-            <form className="flex w-full max-w-6xl items-center bg-white p-3 shadow-lg">
-    
-    {/* Cuisine */}
-    <div className="flex flex-1 items-center border-r border-gray-200 px-4">
-        <span className="mr-3 text-gray-400">⌕</span>
-        <input
-            type="text"
-            placeholder="Search cuisines, restaurants..."
-            className="w-full outline-none text-gray-700 placeholder:text-gray-400"
-        />
-    </div>
+      <div className="bg-[url('../public/restaurant_1.png')]" >
+        <Header />
+        {/* <LogInAndSignIn prop={ {setLonIn , setSignIn , logIn , signIn} } /> */}
+        <div className='w-screen h-screen text-white space-y-10 flex flex-col justify-center items-center' >
+          <p className='text-amber-400 text-2xl' >EXQUISITIC DINER EXPERIANCE</p>
+          <h1 className='font-extrabold text-6xl'>Curation For The Discering Palete</h1>
+          <form onSubmit={handleSubmit(searching)} className="flex w-full max-w-6xl items-center bg-white p-3 shadow-lg">
 
-    {/* Location */}
-    <div className="flex flex-1 items-center border-r border-gray-200 px-4">
-        <span className="mr-3 text-gray-400">⌖</span>
-        <input
-            type="text"
-            placeholder="Location (e.g. McDonald's)"
-            className="w-full outline-none text-gray-700 placeholder:text-gray-400"
-        />
-    </div>
+            {/* Cuisine */}
+            <div className="p-3 focus-within:border focus-within:border-black flex flex-1 items-center border-r border-gray-200 px-4">
+              <span className="mr-3 text-gray-400">⌕</span>
+              <input
+              {...register("cuisine")}
+                type="text"
+                placeholder="Search cuisines, restaurants..."
+                className="w-full outline-none text-gray-700 placeholder:text-gray-400"
+              />
+            </div>
 
-    {/* Date */}
-    <div className="flex flex-1 items-center border-r border-gray-200 px-4">
-        <span className="mr-3 text-gray-400">▣</span>
-        <input
-            type="date"
-            className="w-full outline-none text-gray-700"
-        />
-    </div>
+            {/* Location */}
+            <div className="p-3 focus-within:border focus-within:border-black flex flex-1 items-center border-r border-gray-200 px-4">
+              <span className="mr-3 text-gray-400">⌖</span>
+              <input
+              {...register("location")}
+                type="text"
+                placeholder="Location (e.g. McDonald's)"
+                className="w-full outline-none text-gray-700 placeholder:text-gray-400"
+              />
+            </div>
 
-    {/* Guests */}
-    <div className="flex w-48 items-center border-r border-gray-200 px-4">
-        <span className="mr-3 text-gray-400">♙</span>
+            {/* Date */}
+            <div className="p-3 focus-within:border focus-within:border-black flex flex-1 items-center border-r border-gray-200 px-4">
+              <span className="mr-3 text-gray-400">▣</span>
+              <input
+              {...register("date")}
+                min={new Date().toISOString().split('T')[0]}
+                type="date"
+                className="w-full outline-none text-gray-700"
+              />
+            </div>
 
-        <select className="w-full bg-transparent outline-none text-gray-700">
-            <option>2 Guests</option>
-            <option>3 Guests</option>
-            <option>4 Guests</option>
-            <option>5 Guests</option>
-            <option>6 Guests</option>
-        </select>
-    </div>
+            {/* Guests */}
+            <div className="p-3 focus-within:border focus-within:border-black flex w-48 items-center border-r border-gray-200 px-4">
+              <span className="mr-3 text-gray-400">♙</span>
 
-    {/* Button */}
-    <button
-        type="submit"
-        className="ml-3 bg-black px-8 py-4 text-sm font-semibold tracking-wide text-white hover:bg-gray-800"
-    >
-        FIND A TABLE
-    </button>
+              <select  {...register("guests")} className="w-full bg-transparent outline-none text-gray-700">
+                <option>2 Guests</option>
+                <option>3 Guests</option>
+                <option>4 Guests</option>
+                <option>5 Guests</option>
+                <option>6 Guests</option>
+              </select>
+            </div>
 
-</form>
-    
+            {/* Button */}
+            <button
+              type="submit"
+              className="hover:bg-gray-800 hover:cursor-grab ml-3 bg-black px-8 py-4 text-sm font-semibold tracking-wide text-white"
+            >
+              FIND A TABLE
+            </button>
+
+          </form>
+
+        </div>
+
       </div>
-      
-    </div>
-    <section className="border-t border-[#e5e5e5] px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
-        
+      <section className="border-t border-[#e5e5e5] px-6 py-12 sm:px-10 lg:px-16 xl:px-24">
+
         <div className="mx-auto max-w-[1400px]">
-          
+
           {/* Heading */}
           <div className="mb-14 flex items-end justify-between">
             <div>
@@ -206,7 +214,7 @@ function Home() {
               </h2>
             </div>
 
-            <NavLink to='/resturants' className="hidden items-center gap-2 text-[12px] font-medium tracking-wide text-[#77734d] sm:flex">
+            <NavLink to='/restaurants' className="hidden items-center gap-2 text-[12px] font-medium tracking-wide text-[#77734d] sm:flex">
               EXPLORE ALL
               <span className="text-lg">→</span>
             </NavLink>
@@ -232,9 +240,9 @@ function Home() {
         </div>
       </section>
       <section className="mt-12 bg-[#f6f6f6] px-6 py-24 sm:px-10 lg:px-16 xl:px-24">
-        
+
         <div className="mx-auto max-w-[1400px]">
-          
+
           {/* Heading */}
           <div className="mb-14 flex items-end justify-between">
             <div>
@@ -247,7 +255,7 @@ function Home() {
               </h2>
             </div>
 
-            <NavLink to='/resturants' className="hidden items-center gap-2 text-[12px] font-medium tracking-wide text-[#77734d] sm:flex">
+            <NavLink to='/restaurants' className="hidden items-center gap-2 text-[12px] font-medium tracking-wide text-[#77734d] sm:flex">
               VIEW ALL
               <span className="text-lg">→</span>
             </NavLink>
@@ -287,69 +295,69 @@ function Home() {
       </section>
 
       <section className="w-full bg-white px-6 py-20 sm:px-10 lg:px-16 xl:px-24">
-      <div className="mx-auto flex max-w-[1500px] flex-col items-center gap-12 lg:flex-row lg:gap-20">
-        
-        {/* Image */}
-        <div className="w-full lg:w-[56%]">
-          <div className="aspect-[1.5/1] w-full overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=85"
-              alt="Elegant fine dining table"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
+        <div className="mx-auto flex max-w-[1500px] flex-col items-center gap-12 lg:flex-row lg:gap-20">
 
-        {/* Content */}
-        <div className="w-full max-w-[570px] lg:w-[44%]">
-          
-          {/* Small Heading */}
-          <p className="mb-5 text-[11px] font-medium tracking-[0.25em] text-[#77734d]">
-            PREMIUM CLUB MEMBERSHIP
-          </p>
-
-          {/* Main Heading */}
-          <h2 className="font-serif text-4xl leading-[1.08] tracking-[-0.025em] text-[#171717] sm:text-5xl">
-            Access the Exquisite Chef's Table
-          </h2>
-
-          {/* Description */}
-          <p className="mt-8 max-w-[540px] text-[15px] leading-7 text-[#777]">
-            Join GourmetReserve and receive priority access to seasonal chef
-            collaborations, private dining club events, and table guarantees
-            at high-demand tables.
-          </p>
-
-          {/* Benefits */}
-          <div className="mt-10 space-y-7">
-            {benefits.map((benefit) => (
-              <div
-                key={benefit.title}
-                className="flex items-start gap-5"
-              >
-                {/* Icon */}
-                <div className="mt-0.5 shrink-0 text-[#77734d]">
-                  {benefit.icon}
-                </div>
-
-                {/* Text */}
-                <div>
-                  <h3 className="text-[15px] font-medium text-[#171717]">
-                    {benefit.title}
-                  </h3>
-
-                  <p className="mt-2 text-[13px] leading-6 text-[#777]">
-                    {benefit.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+          {/* Image */}
+          <div className="w-full lg:w-[56%]">
+            <div className="aspect-[1.5/1] w-full overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=85"
+                alt="Elegant fine dining table"
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
 
+          {/* Content */}
+          <div className="w-full max-w-[570px] lg:w-[44%]">
+
+            {/* Small Heading */}
+            <p className="mb-5 text-[11px] font-medium tracking-[0.25em] text-[#77734d]">
+              PREMIUM CLUB MEMBERSHIP
+            </p>
+
+            {/* Main Heading */}
+            <h2 className="font-serif text-4xl leading-[1.08] tracking-[-0.025em] text-[#171717] sm:text-5xl">
+              Access the Exquisite Chef's Table
+            </h2>
+
+            {/* Description */}
+            <p className="mt-8 max-w-[540px] text-[15px] leading-7 text-[#777]">
+              Join GourmetReserve and receive priority access to seasonal chef
+              collaborations, private dining club events, and table guarantees
+              at high-demand tables.
+            </p>
+
+            {/* Benefits */}
+            <div className="mt-10 space-y-7">
+              {benefits.map((benefit) => (
+                <div
+                  key={benefit.title}
+                  className="flex items-start gap-5"
+                >
+                  {/* Icon */}
+                  <div className="mt-0.5 shrink-0 text-[#77734d]">
+                    {benefit.icon}
+                  </div>
+
+                  {/* Text */}
+                  <div>
+                    <h3 className="text-[15px] font-medium text-[#171717]">
+                      {benefit.title}
+                    </h3>
+
+                    <p className="mt-2 text-[13px] leading-6 text-[#777]">
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
         </div>
-      </div>
-    </section>
-    <Footer />
+      </section>
+      <Footer />
     </div>
   )
 }

@@ -8,17 +8,13 @@ function Header() {
   
   const cookies = document.cookie;
   console.log("The cookies in the header are : " , cookies);
-  const myCookie = {
-    name : "Rauf Ahmad Khan",
-    gmail : "devraufahmadniazi@gmail.com",
-    role : "admin"
-  }
+  
 
   const [ signIn , setSignIn ] = useState(false);
     const [logIn , setLogIn] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
-
+  const myCookie = null;
   
 
   const navClass = ({ isActive }) =>

@@ -4,7 +4,7 @@ import { useNavigate , NavLink } from 'react-router-dom'
   
 
 const RestuentBox = ({prop , key}) => {
-    console.log("THe prop is :" , prop);
+    // console.log("THe prop is :" , prop);
     const navigate = useNavigate();
   const handler = () => {
       console.log("Naviagate has been called");
