@@ -14,7 +14,12 @@ function Header() {
     const [logIn , setLogIn] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const myCookie = null;
+  const myCookie = {
+    id : 1,
+    name : "John Doe",
+    gmail : "johndoe@example.com",
+    role : "user"
+  }
   
 
   const navClass = ({ isActive }) =>
@@ -82,7 +87,7 @@ function Header() {
       </div>}
       {
         myCookie && 
-          <button onClick={() => setDropdown(!dropdown)} className='relative w-30 h-10 space-x-3 flex flex-row justify-center items-center hover:cursor-grab' >
+          <div onClick={() => setDropdown(!dropdown)} className='inline-block relative w-30 h-10 space-x-3 flex flex-row justify-center items-center hover:cursor-grab' >
             { dropdown && <div className='z-10 space-y-3 text-black absolute top-full flex flex-col justify-center w-[250px] h-[200px] bg-white rounded-2xl' >
                 <div className='text-black pl-5 flex flex-col gap-y-1' >
                   <h1 className='text-sm text-start font-bold' >{myCookie.name}</h1>
@@ -105,7 +110,7 @@ function Header() {
               {myCookie.name.charAt(0).toUpperCase()}
             </button>
             <p className={ `${ isHome ? 'text-white' : 'text-yellow-600' } text-center ` }>{ myCookie.name.split(" ")[0] }</p>
-          </button>
+          </div>
         
       }
     </header>

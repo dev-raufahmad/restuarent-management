@@ -16,9 +16,8 @@ const Resturants = () => {
 
   const [consine, setConsine] = useState([]);
   const [location, setLocation] = useState("");
-  const [filter, setFilter] = useState("have a nice day");
+  const [filter, setFilter] = useState("");
   const [price, setPrice] = useState("")
-  const [data, setData] = useState();
 
   console.log("The cuisine is in the restuarnt page : " , consine);
   console.log("The location in the restuarants is : " , location);
@@ -28,7 +27,7 @@ const Resturants = () => {
 
   return (
     <div className='bg-gray-50 min-h-min boder-2 border-black flex flex-col space-y-5' >
-      <searchAPI.Provider value={{ consine, setConsine, location, setLocation, filter, setFilter, price, setPrice, data, setData }}  >
+      <searchAPI.Provider value={{ consine, setConsine, location, setLocation, filter, setFilter, price, setPrice }}  >
         <Header />
         <SearchBar />
         <FilterAndMain />

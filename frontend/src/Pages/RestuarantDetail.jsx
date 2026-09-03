@@ -1,27 +1,10 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
 import Comment from "../Component/Comment";
 
-const comment = [
-  {
-    name: "Rauf Ahmad Khan Niazi",
-    rating: 0,
-    date: "16/10/2026",
-    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, minus rem ex debitis nostrum laboriosam sed, dolorum mollitia, officia voluptatum laudantium amet deleniti saepe! Quia ipsum odit molestias ab ea?'
-  }, {
-    name: "Rauf Ahmad",
-    rating: 4,
-    date: "6/10/2026",
-    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, minus rem ex debitis nostrum laboriosam sed, dolorum mollitia, officia voluptatum laudantium amet deleniti saepe! Quia ipsum odit molestias ab ea?'
-  }, {
-    name: "Rauf Ahmad",
-    rating: 5,
-    date: "6/10/2026",
-    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, minus rem ex debitis nostrum laboriosam sed, dolorum mollitia, officia voluptatum laudantium amet deleniti saepe! Quia ipsum odit molestias ab ea?'
-  }
-]
+
 
 const time = [
   '18:00',
@@ -33,13 +16,35 @@ const time = [
 ]
 
 const RestuarantDetail = () => {
+  const [ comments , setComments ] = useState([]);
+  const {id} = useParams();
   const location = useLocation();
   const restuarant = location.state;
 
   console.log(
     "The restuarant in the restuarant detail is : ",
-    restuarant
+    restuarant 
   );
+  console.log("The id of the restuaranr is : " , id);
+  console.log("The comment we have in the retuarants is : " , comments);
+  
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      const data = await fetch(`http://localhost:3000/restuarants/comments/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials : 'include'
+      });
+      if(data.status == 200){
+      const comments = await data.json();
+      setComments(comments.comments);
+      }
+    };
+    fetchComments();
+  } , [ id ]);
 
   return (
     <div className="flex flex-col min-h-lvh min-w-lvw bg-gray-50">
@@ -75,11 +80,11 @@ const RestuarantDetail = () => {
           <div className="flex flex-wrap items-center gap-3">
 
             <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg">
-              ⭐ {restuarant.rating}
+              ⭐ {restuarant.average}
             </div>
 
             <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg">
-              💬 {restuarant.totalReviews} Reviews
+              💬 {restuarant.total_reviews} Reviews
             </div>
 
             <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg">
@@ -161,12 +166,16 @@ const RestuarantDetail = () => {
             {/* Comments */}
             <div className="flex flex-col gap-4">
 
-              {comment.map((e, index) => (
+              {(comments && comments.map((e, index) => (
                 <Comment
                   prop={e}
                   key={index}
                 />
-              ))}
+              ))) || <p className="text-gray-500">
+                  No comments yet.
+                </p>} {
+                
+              }
 
             </div>
 
