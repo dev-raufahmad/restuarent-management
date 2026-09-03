@@ -14,8 +14,8 @@ const route = createBrowserRouter(
     <>
         <Route path='/' element={ <Home/> } />
         <Route path='/restaurants' element={ <Resturants /> } />
-        <Route path='/my-bookings' element={ <ProtectedRoute > <UserDashboard /> </ProtectedRoute> }/>
-        <Route path='/restuarant' element={ <RestuarantDetail /> } />
+        <Route path='/my-bookings' element={ <ProtectedRoute  > <UserDashboard /> </ProtectedRoute> }/>
+        <Route path='/restuarant/:id' element={ <RestuarantDetail /> } />
         {/* <Route path='/admin/dashboard' element={ <AdminDashboard /> } /> */}
         <Route path='/owner/dashboard' element={ <OwnerDashboard /> } />
     </>

@@ -23,7 +23,7 @@ const Comment = ({ prop }) => {
             </h1>
 
             <p className="text-sm text-gray-400">
-              Visited {prop.date}
+              Visited {prop.date || "Date not available"}
             </p>
           </div>
 
@@ -52,7 +52,7 @@ const Comment = ({ prop }) => {
 
       {/* Review */}
       <p className="mt-4 text-gray-600 leading-relaxed">
-        {prop.content}
+        {prop.review}
       </p>
 
     </div>

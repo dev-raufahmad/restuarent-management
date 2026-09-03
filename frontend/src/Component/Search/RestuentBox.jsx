@@ -3,13 +3,13 @@ import { useNavigate , NavLink } from 'react-router-dom'
 
   
 
-const RestuentBox = ({prop , key}) => {
+const RestuentBox = ({prop}) => {
     // console.log("THe prop is :" , prop);
     const navigate = useNavigate();
   const handler = () => {
       console.log("Naviagate has been called");
       
-      navigate(`/restuarant` , {
+      navigate(`/restuarant/${prop.id}` , {
         state : {
           ...prop
         }}
