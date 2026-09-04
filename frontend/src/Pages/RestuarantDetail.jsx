@@ -1,33 +1,97 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams , useNavigate } from "react-router-dom";
 import Header from "../Component/Header";
 import Footer from "../Component/Footer";
 import Comment from "../Component/Comment";
+import { useForm } from "react-hook-form";
+import { toast , ToastContainer } from 'react-toastify'
 
 
 
-const time = [
-  '18:00',
-  '19:00',
-  '20:00',
-  '21:00',
-  '22:00',
-  '23:00',
-]
 
 const RestuarantDetail = () => {
-  const [ comments , setComments ] = useState([]);
-  const {id} = useParams();
+  const navigate = useNavigate();
+  const isfoCookies = {
+    id : "10"
+  }
+  const [ times , setTimes ] = useState([]);
+  const [ timeLoaded , setTimeLoaded ] = useState(false);
+  const { register , handleSubmit , watch , setValue } = useForm({ shouldUnregister : true });
+  const [comments, setComments] = useState([]);
+  const { id } = useParams();
   const location = useLocation();
   const restuarant = location.state;
+  const formTIme = watch("time");
 
   console.log(
     "The restuarant in the restuarant detail is : ",
-    restuarant 
+    restuarant
   );
-  console.log("The id of the restuaranr is : " , id);
-  console.log("The comment we have in the retuarants is : " , comments);
-  
+  console.log("The id of the restuaranr is : ", id);
+  console.log("The comment we have in the retuarants is : ", comments);
+
+  const regsiterForm = async (data) => {
+    console.log("THe data in the register form is : " , data);
+    if(!data.time){
+      const response = await fetch(`http://localhost:3000/restuarants/available-times/${id}/${data.date}`, {
+        method : "GET",
+        headers : {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+      });
+      if(response.status == 200){
+        const result = await response.json();
+        setTimeLoaded(true);
+        result.times.forEach((e) => {
+          setTimes((prev) => [...prev , e.time]);
+        })
+        return;
+      }
+      toast.error("Error fetching available times. Please try again later.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }else{
+      const response = await fetch(`http://localhost:3000/restuarants/reserve/${id}`, {
+        method : "POST",
+        headers : {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body : JSON.stringify({
+          id : isfoCookies.id,
+          guests : data.guests,
+          date : data.date,
+          time : data.time,
+          id : isfoCookies.id
+        })});
+        if(response.status == 200){
+          toast.success("Reservation made successfully!")
+          navigate('/my-bookings');
+        }else if(response.status == 300){
+          toast.error("Time time slot was already booked. Please select another time slot.");
+          setTimes(times.filter((e) => e !== data.time));
+        }else{
+          toast.error("Error making reservation. Please try again later.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+      }
+    }
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -36,18 +100,19 @@ const RestuarantDetail = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials : 'include'
+        credentials: 'include'
       });
-      if(data.status == 200){
-      const comments = await data.json();
-      setComments(comments.comments);
+      if (data.status == 200) {
+        const comments = await data.json();
+        setComments(comments.comments);
       }
     };
     fetchComments();
-  } , [ id ]);
+  }, [id]);
 
   return (
     <div className="flex flex-col min-h-lvh min-w-lvw bg-gray-50">
+      <ToastContainer />
       <Header />
 
       {/* Hero Section */}
@@ -174,7 +239,7 @@ const RestuarantDetail = () => {
               ))) || <p className="text-gray-500">
                   No comments yet.
                 </p>} {
-                
+
               }
 
             </div>
@@ -183,10 +248,10 @@ const RestuarantDetail = () => {
 
         </div>
 
-              {/* Here is the form that will take the reservation details  */}
+        {/* Here is the form that will take the reservation details  */}
 
         <form
-  className="
+          className="
     fixed z-50 flex flex-col gap-y-4 bg-white p-6 rounded-lg shadow-lg
     w-[320px] max-w-[90vw] max-h-[85vh] overflow-y-auto
 
@@ -195,70 +260,89 @@ const RestuarantDetail = () => {
     max-md:right-auto max-md:left-1/2 max-md:top-1/2
     max-md:-translate-x-1/2 max-md:-translate-y-1/2
     max-md:w-[85vw] max-md:p-4
-  "
+  " onSubmit={handleSubmit(regsiterForm)}
+        >
+          {/* Party Size */}
+          <div className="flex flex-col gap-y-1 relative">
+            <label htmlFor="guests" className="text-xs font-semibold tracking-wide text-gray-700">
+              PARTY SIZE
+            </label>
+            <div className="relative">
+              <img
+                className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5 pointer-events-none"
+                src="https://cdn-icons-png.flaticon.com/128/694/694642.png"
+                alt="Guests icon"
+              />
+              <select
+                disabled={timeLoaded}
+                {...register("guests")}
+                id="guests"
+                className="pl-10 pr-3 bg-gray-100 border border-gray-300 rounded-md h-11 w-full appearance-none focus:outline-none focus:ring-2 focus:ring-black/70"
+              >
+                <option value="1">1 Guest</option>
+                <option value="2">2 Guests</option>
+                <option value="4">4 Guests</option>
+                <option value="6">6 Guests</option>
+                <option value="8">8 Guests</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Date */}
+          <div className="flex flex-col gap-y-1">
+            <label htmlFor="date" className="text-xs font-semibold tracking-wide text-gray-700">
+              DATE
+            </label>
+            <input
+              readOnly={timeLoaded}
+              {...register("date")}
+              id="date"
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              className="h-11 w-full border border-gray-300 rounded-md px-3 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black/70"
+            />
+          </div>
+
+          {/* Time slots */}
+          {
+            timeLoaded && times && times.length > 0 && <div className="flex flex-row flex-wrap gap-2">
+            {times.length > 0 && times.map((e, i) => (
+              <button
+  key={i}
+  type="button"
+  onClick={() => {
+    setValue("time", e);
+  }}
+  className={`${
+    formTIme === e
+      ? "bg-black text-white"
+      : "text-black/70 border border-black/20"
+  } text-sm border border-black/20 rounded-md px-4 py-2 hover:opacity-100 hover:border-black hover:bg-black hover:text-white transition-all duration-200`}
 >
-  {/* Party Size */}
-  <div className="flex flex-col gap-y-1 relative">
-    <label htmlFor="guests" className="text-xs font-semibold tracking-wide text-gray-700">
-      PARTY SIZE
-    </label>
-    <div className="relative">
-      <img
-        className="absolute top-1/2 left-3 -translate-y-1/2 w-5 h-5 pointer-events-none"
-        src="https://cdn-icons-png.flaticon.com/128/694/694642.png"
-        alt="Guests icon"
-      />
-      <select
-        id="guests"
-        className="pl-10 pr-3 bg-gray-100 border border-gray-300 rounded-md h-11 w-full appearance-none focus:outline-none focus:ring-2 focus:ring-black/70"
-      >
-        <option value="1">1 Guest</option>
-        <option value="2">2 Guests</option>
-        <option value="4">4 Guests</option>
-        <option value="6">6 Guests</option>
-        <option value="8">8 Guests</option>
-      </select>
-    </div>
-  </div>
+  {e}
+</button>
+            ))}
+          </div>
+          }
 
-  {/* Date */}
-  <div className="flex flex-col gap-y-1">
-    <label htmlFor="date" className="text-xs font-semibold tracking-wide text-gray-700">
-      DATE
-    </label>
-    <input
-      id="date"
-      type="date"
-      min={new Date().toISOString().split("T")[0]}
-      className="h-11 w-full border border-gray-300 rounded-md px-3 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black/70"
-    />
-  </div>
+          {
+            timeLoaded && times && times.length === 0 && <p className="text-sm text-red-500">
+              No available time slots for the selected date. Please choose another date.
+            </p>
+          }
 
-  {/* Time slots */}
-  <div className="flex flex-row flex-wrap gap-2">
-    {time.map((e, i) => (
-      <button
-        key={i}
-        type="button"
-        className="text-sm text-black/70 border border-black/20 rounded-md px-4 py-2 hover:opacity-100 hover:border-black hover:bg-black hover:text-white transition-all duration-200"
-      >
-        {e}
-      </button>
-    ))}
-  </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            className="p-4 text-lg font-medium text-white bg-black rounded-md hover:bg-yellow-600 transition-colors duration-200"
+          >
+            { timeLoaded ? "Reserve now" : "Search for available times" }
+          </button>
 
-  {/* Submit */}
-  <button
-    type="submit"
-    className="p-4 text-lg font-medium text-white bg-black rounded-md hover:bg-yellow-600 transition-colors duration-200"
-  >
-    Reserve now
-  </button>
-
-  <p className="text-xs text-gray-500 text-center">
-    No reservation fee. Cancel for free up to 24 hours prior.
-  </p>
-</form>
+          <p className="text-xs text-gray-500 text-center">
+            No reservation fee. Cancel for free up to 24 hours prior.
+          </p>
+        </form>
       </div>
       <Footer />
     </div>
